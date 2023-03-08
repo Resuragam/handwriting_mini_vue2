@@ -1,6 +1,6 @@
 // 就是给Vue增加init方法
 import { initState } from "./state";
-import {compileToFunction} from "./compiler";
+import { compileToFunction } from "./compiler/index";
 
 export function initMixin(Vue) {
     Vue.prototype._init = function (options) { // 进行初始化操作
@@ -40,6 +40,6 @@ export function initMixin(Vue) {
             // console.log(template)
         }
 
-        ops.render; // 最终可以获取render方法
+        // ops.render; // 最终可以获取render方法
     }
 }
