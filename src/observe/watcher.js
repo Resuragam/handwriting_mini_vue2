@@ -9,16 +9,26 @@ let id = 0
 * */
 // 渲染watcher
 class Watcher{ // 不同组件存在不同的watcher new Watcher
-    constructor(vm, fn, options) {
+    constructor(vm, exprOfFn, options, cb) {
         this.id = id ++
         this.renderWatcher = options // options为true表示一个渲染watcher
-        this.getter = fn // getter意外是调用这个函数发生取值操作
+
+        if(typeof exprOfFn === 'string') {
+            this.getter = function () {
+                return vm[exprOfFn]
+            }
+        }else {
+            this.getter = exprOfFn
+        }
+        // this.getter = exprOfFn // getter意外是调用这个函数发生取值操作
         this.deps = [] // 后续我们实现计算属性，和一些清理工作需要用到
         this.depsId = new Set()
         this.lazy = options.lazy
         this.dirty = this.lazy // 缓存值
         this.vm = vm
-        this.lazy ? undefined : this.get()
+        this.user = options.user // 标识是否是用户自己的watcher
+        this.cb = cb
+        this.value = this.lazy ? undefined : this.get()
     }
     addDep(dep) { // 一个组件对应着多个属性，重复的属性不记录
         let id = dep.id
@@ -58,8 +68,12 @@ class Watcher{ // 不同组件存在不同的watcher new Watcher
         }
     }
     run() {
+        let oldValue = this.value
+        let newValue = this.get()
+        if(this.user) {
+            this.cb.call(this.vm, newValue, oldValue)
+        }
         // console.log('现在才是最后的渲染')
-        this.get()
     }
 }
 

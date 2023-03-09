@@ -11,6 +11,34 @@ export function initState(vm) {
     if(opts.computed) {
         initComputed(vm)
     }
+    if(opts.watch) {
+        initWatch(vm)
+    }
+}
+
+function initWatch(vm) {
+    let watch = vm.$options.watch
+
+    for(let key in watch) { // 字符串 数组 函数
+        const handler = watch[key]
+
+        if(Array.isArray(handler)) {
+            for(let i = 0; i < handler.length; i++) {
+                createWatcher(vm, key, handler[i])
+            }
+        }else {
+            createWatcher(vm, key, handler)
+        }
+    }
+}
+
+function createWatcher(vm, key, handler) {
+    // 字符串 数组 函数
+    if(typeof handler === 'string') {
+        handler = vm[handler]
+        console.log(handler)
+    }
+    return vm.$watch(key, handler)
 }
 
 function proxy(vm, target, key) {
@@ -80,7 +108,7 @@ function createComputedGetter(key) {
             // 如果是脏的就去执行 用户传入依赖
             watcher.evaluate()
         }
-        if(Dep.target) { // 说明计算属性出栈后 还有watcher， 应该让依赖的属性手机上层watcher
+        if(Dep.target) { // 说明计算属性出栈后 还有watcher， 应该让依赖的属性收集上层watcher
             watcher.depend()
         }
         return watcher.value
