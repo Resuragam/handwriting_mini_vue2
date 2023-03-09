@@ -60,6 +60,7 @@ function genChildren(children) {
 }
 
 function codegen(ast) {
+    // console.log(ast)
     let children = genChildren(ast.children)
     let code = `_c('${ast.tag}',${
         ast.attrs.length > 0 ? genProps(ast.attrs) : 'null'
@@ -76,9 +77,17 @@ export function compileToFunction(template) {
 
     // 2. 生成render方法(render方法执行后的结果就是虚拟DOM)
 
-    console.log(ast)
+    // console.log(ast)
+    //
+    // console.log(codegen(ast))
+    // 模板引擎实现原理 with + new Function
+    let code = codegen(ast)
+    // console.log(code)
+    code = `with(this){return ${code}}`
+    let render = new Function(code)
 
-    console.log(codegen(ast))
+
+    return render
     // render(){
     //     return _c('div', {id:'app'}, _c('div', {style: { color: "red"}}, _v(_s(name) + 'hello')))
     // }

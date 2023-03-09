@@ -1,6 +1,7 @@
 // 就是给Vue增加init方法
 import { initState } from "./state";
 import { compileToFunction } from "./compiler/index";
+import {mountComponent} from "./lifecycle";
 
 export function initMixin(Vue) {
     Vue.prototype._init = function (options) { // 进行初始化操作
@@ -37,9 +38,10 @@ export function initMixin(Vue) {
                 const render = compileToFunction(template)
                 ops.render = render
             }
+
             // console.log(template)
         }
-
+        mountComponent(vm, el) //组建的挂载
         // ops.render; // 最终可以获取render方法
     }
 }
