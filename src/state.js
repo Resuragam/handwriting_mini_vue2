@@ -1,7 +1,8 @@
 import { observe } from "./observe/index.js"
-import Watcher from "./observe/watcher";
+import Watcher, {nextTick} from "./observe/watcher";
 import Dep from "./observe/dep";
 import dep from "./observe/dep";
+import Vue from "./index";
 
 export function initState(vm) {
     const opts = vm.$options // 获取所有的选项
@@ -112,5 +113,18 @@ function createComputedGetter(key) {
             watcher.depend()
         }
         return watcher.value
+    }
+}
+
+export function initStateMixin(Vue) {
+    Vue.prototype.$nextTick = nextTick
+    Vue.prototype.$watch = function (exprOrFn, cb) {
+        // firstName
+        // () => vm.firstName
+
+        // firstName的值变换，直接执行cb函数
+        new Watcher(this, exprOrFn, {
+            user: true
+        }, cb)
     }
 }
