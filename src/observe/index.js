@@ -1,5 +1,6 @@
 import {isAsync} from "@babel/core/lib/gensync-utils/async";
 import {newArrayProto} from "./array";
+import Dep from "./dep";
 
 class Observer {
     constructor(data) {
@@ -34,14 +35,22 @@ class Observer {
 
 export function defineReactive(target, key, value) { //属性劫持
     observe(value) // 对所有的对象都进行属性劫持
+    let dep = new Dep() // 每一个属性都存在一个dep,dep内部会存放watcher
     Object.defineProperty(target, key, {
         get() { // 取值执行get
-            console.log('用户取值')
+            // console.log('用户取值')
+
+            if(Dep.target) {
+                dep.depend() // 让这个属性的收集记住当前的watcher
+            }
+
             return value
         },
         set(newValue) { // 修改执行set
-            console.log('用户设置值')
+            // console.log('用户设置值')
             if(newValue === value) return
+            observe(newValue)
+            dep.notify()
             value = newValue
         }
     })
