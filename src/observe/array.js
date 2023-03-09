@@ -36,8 +36,9 @@ methods.forEach(method => {
         if(inserted) {
             ob.observeArray(inserted)
         }
-        console.log(inserted) //新增内容
-        console.log('method', method)
+        // console.log(inserted) //新增内容
+        // console.log('method', method)
+        ob.dep.notify() // 数组变化，通知更新
         return result
     }
 })

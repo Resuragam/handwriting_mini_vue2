@@ -52,7 +52,7 @@ export function initLifeCycle(Vue) {
         const vm = this
         const el = vm.$el
 
-        console.log(el)
+        // console.log(el)
         // vnode转化为真实DOM
         // console.log('update', vnode)
         // patch既有初始化的功能，又有更新的功能
@@ -89,7 +89,7 @@ export function mountComponent(vm, el) {
     }
 
     const watcher = new Watcher(vm, updateComponent, true)
-    console.log(watcher)
+    // console.log(watcher)
     // 2. 根据虚拟DOM实现真实DOM
 
     // 3. 插入el元素中

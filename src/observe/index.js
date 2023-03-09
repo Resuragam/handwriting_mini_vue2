@@ -1,9 +1,11 @@
-import {isAsync} from "@babel/core/lib/gensync-utils/async";
 import {newArrayProto} from "./array";
 import Dep from "./dep";
 
 class Observer {
     constructor(data) {
+
+        this.dep = new Dep() // 所有对象增加dep，增加属性也可以触发更新
+
         // Object.defineProperty已经只能劫持已经存在的属性
         // $set $delete
         Object.defineProperty(data, '__ob__', {
@@ -33,8 +35,19 @@ class Observer {
     }
 }
 
+// 深层次递归嵌套，递归多了性能差，不存在的属性检测不到，存在的属性重写方法
+function dependArray(value) {
+    for(let i = 0; i < value.length; i++) {
+        let current = value[i]
+        current.__ob__ && current.__ob__.dep.depend()
+        if(Array.isArray(current)) {
+            dependArray(current)
+        }
+    }
+}
+
 export function defineReactive(target, key, value) { //属性劫持
-    observe(value) // 对所有的对象都进行属性劫持
+    let childOb = observe(value) // 对所有的对象都进行属性劫持 对象上面存在childOb.dep收集依赖
     let dep = new Dep() // 每一个属性都存在一个dep,dep内部会存放watcher
     Object.defineProperty(target, key, {
         get() { // 取值执行get
@@ -42,6 +55,12 @@ export function defineReactive(target, key, value) { //属性劫持
 
             if(Dep.target) {
                 dep.depend() // 让这个属性的收集记住当前的watcher
+                if(childOb) {
+                    childOb.dep.depend()
+                    if(Array.isArray(value)) {
+                        dependArray(value)
+                    }
+                }
             }
 
             return value

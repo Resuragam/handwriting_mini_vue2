@@ -10,7 +10,7 @@ export function initMixin(Vue) {
         const vm = this
         vm.$options = options
 
-        // 初始化状态
+        // 初始化状态,初始化计算属性
         initState(vm)
 
         if(options.el) {
