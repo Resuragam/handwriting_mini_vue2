@@ -6,12 +6,19 @@ export function initLifeCycle(Vue) {
     Vue.prototype._update = function (vnode) {
         const vm = this
         const el = vm.$el
-
+        const prevVnode = vm._vnode
+        vm._vnode = vnode
         // console.log(el)
         // vnode转化为真实DOM
         // console.log('update', vnode)
         // patch既有初始化的功能，又有更新的功能
-        vm.$el = patch(el, vnode)
+
+        if(prevVnode) { // 之前渲染过了
+            vm.$el = patch(prevVnode, vnode)
+        }else {
+            vm.$el = patch(el, vnode)
+        }
+        // 把组件第一次产生的虚拟节点保存在vnode上
     }
     // _c('div',{},...children)
     Vue.prototype._c = function () {
@@ -61,3 +68,10 @@ export function mountComponent(vm, el) {
 * render函数会产生虚拟节点，使用响应式数据
 * 根据虚拟节点创造真实DOM
 * */
+
+export function callHook(vm, hook) {
+    const handlers = vm.$options[hook]
+    if(handlers) {
+        handlers.forEach(handler => handler.call(vm))
+    }
+}

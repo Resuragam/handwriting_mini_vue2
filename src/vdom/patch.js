@@ -140,7 +140,7 @@ function updateChildren(el, oldChildren, newChildren) {
         return map
     }
     let map = makeIndexByKey(oldChildren)
-    console.log(map)
+    // console.log(map)
     // console.log(oldStartVnode, newStartVnode)
     // console.log(oldEndVnode, newEndVnode)
 
@@ -222,7 +222,7 @@ function updateChildren(el, oldChildren, newChildren) {
 
     // 我们为了 比较两个儿子的时候 增高性能 我们会有一些优化策略
     // console.log(el,oldChildren,newChildren)
-    
+
     // 如果批量像页面修改出入内容，浏览器会自动优化
 }
 
