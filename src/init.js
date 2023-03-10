@@ -37,9 +37,8 @@ export function initMixin(Vue) {
                 template = el.outerHTML
             }else {
                 // 有el和模板
-                if(el) {
-                    template = ops.template
-                }
+                template = ops.template
+
             }
             if(template) {
                 // 需要对模板进行编译
